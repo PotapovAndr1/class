@@ -16,6 +16,24 @@ class Student:
         else:
             print(f"Не могу оценить лектора {lecturer.name} {lecturer.surname} по курсу {course}.")
 
+    def average_grade(self):
+        if self.grades:
+            return round(sum([sum(grades) for grades in self.grades.values()]) / 
+                         sum([len(grades) for grades in self.grades.values()]), 1)
+        return 0.0
+
+    def __str__(self):
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}\n"
+                f"Средняя оценка за домашние задания: {self.average_grade()}\n"
+                f"Курсы в процессе изучения: {', '.join(self.courses_in_progress)}\n"
+                f"Завершенные курсы: {', '.join(self.finished_courses)}")
+
+    def __lt__(self, other):
+        if isinstance(other, Student):
+            return self.average_grade() < other.average_grade()
+        return NotImplemented
+
 class Mentor:
     def __init__(self, name, surname):
         self.name = name
@@ -27,6 +45,22 @@ class Lecturer(Mentor):
         super().__init__(name, surname)
         self.grades = {}
 
+    def average_grade(self):
+        if self.grades:
+            return round(sum([sum(grades) for grades in self.grades.values()]) / 
+                         sum([len(grades) for grades in self.grades.values()]), 1)
+        return 0.0
+
+    def __str__(self):
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}\n"
+                f"Средняя оценка за лекции: {self.average_grade()}")
+
+    def __lt__(self, other):
+        if isinstance(other, Lecturer):
+            return self.average_grade() < other.average_grade()
+        return NotImplemented
+
 class Reviewer(Mentor):
     def rate_student(self, student, course, grade):
         if course in student.courses_in_progress:
@@ -37,20 +71,28 @@ class Reviewer(Mentor):
         else:
             print(f"Не могу оценить студента {student.name} {student.surname} по курсу {course}.")
 
+    def __str__(self):
+        return (f"Имя: {self.name}\n"
+                f"Фамилия: {self.surname}")
+
 best_student = Student('Ruoy', 'Eman', 'your_gender')
 best_student.finished_courses += ['Git']
 best_student.courses_in_progress += ['Python']
+best_student.grades['Git'] = [10, 10, 10]
+best_student.grades['Python'] = [9, 8]
 
 cool_lecturer = Lecturer('Some', 'Buddy')
 cool_lecturer.courses_attached += ['Python']
-
-best_student.rate_lecturer(cool_lecturer, 'Python', 9)
-
-print(f'Оценки лектора {cool_lecturer.name} {cool_lecturer.surname}: {cool_lecturer.grades}')
+cool_lecturer.grades['Python'] = [9, 9, 10]
 
 cool_reviewer = Reviewer('Ann', 'Smith')
 cool_reviewer.courses_attached += ['Python']
 
-cool_reviewer.rate_student(best_student, 'Python', 10)
+best_student.rate_lecturer(cool_lecturer, 'Python', 10)
 
-print(f'Оценки студента {best_student.name} {best_student.surname}: {best_student.grades}')
+print(best_student)
+print(cool_lecturer)
+print(cool_reviewer)
+
+print(best_student < Student('John', 'Doe', 'your_gender')) 
+print(cool_lecturer < Lecturer('Jane', 'Doe')) 
