@@ -75,24 +75,59 @@ class Reviewer(Mentor):
         return (f"Имя: {self.name}\n"
                 f"Фамилия: {self.surname}")
 
-best_student = Student('Ruoy', 'Eman', 'your_gender')
-best_student.finished_courses += ['Git']
-best_student.courses_in_progress += ['Python']
-best_student.grades['Git'] = [10, 10, 10]
-best_student.grades['Python'] = [9, 8]
+def average_student_grade(students, course): # Функция для подсчета средней оценки
+    total_grade = 0
+    count = 0
+    for student in students:
+        if course in student.grades:
+            total_grade += sum(student.grades[course])
+            count += len(student.grades[course])
+    return round(total_grade / count, 1) if count else 0.0
 
-cool_lecturer = Lecturer('Some', 'Buddy')
-cool_lecturer.courses_attached += ['Python']
-cool_lecturer.grades['Python'] = [9, 9, 10]
+def average_lecturer_grade(lecturers, course): # Функция для подсчета средней оценки за лекции по курсу
+    total_grade = 0
+    count = 0
+    for lecturer in lecturers:
+        if course in lecturer.grades:
+            total_grade += sum(lecturer.grades[course])
+            count += len(lecturer.grades[course])
+    return round(total_grade / count, 1) if count else 0.0
+    
+student_1 = Student('Ruoy', 'Eman', 'male')
+student_1.finished_courses += ['Git']
+student_1.courses_in_progress += ['Python']
+student_1.grades['Git'] = [9, 9, 9]
+student_1.grades['Python'] = [8, 9]
 
-cool_reviewer = Reviewer('Ann', 'Smith')
-cool_reviewer.courses_attached += ['Python']
+student_2 = Student('John', 'Doe', 'male')
+student_2.finished_courses += ['Git']
+student_2.courses_in_progress += ['Python']
+student_2.grades['Git'] = [8, 8, 8]
+student_2.grades['Python'] = [10, 9]
 
-best_student.rate_lecturer(cool_lecturer, 'Python', 10)
+lecturer_1 = Lecturer('Some', 'Buddy')
+lecturer_1.courses_attached += ['Python']
+lecturer_1.grades['Python'] = [9, 10, 10]
 
-print(best_student)
-print(cool_lecturer)
-print(cool_reviewer)
+lecturer_2 = Lecturer('Jane', 'Doe')
+lecturer_2.courses_attached += ['Python']
+lecturer_2.grades['Python'] = [8, 9, 9]
 
-print(best_student < Student('John', 'Doe', 'your_gender')) 
-print(cool_lecturer < Lecturer('Jane', 'Doe')) 
+reviewer_1 = Reviewer('Ann', 'Smith')
+reviewer_1.courses_attached += ['Python']
+reviewer_1.rate_student(student_1, 'Python', 9)
+reviewer_1.rate_student(student_2, 'Python', 8)
+
+print(student_1)
+print(student_2)
+print(lecturer_1)
+print(lecturer_2)
+print(reviewer_1)
+
+# средняя оценка за дз
+average_student = average_student_grade([student_1, student_2], 'Python')
+print(f'Средняя оценка студентов за курс Python: {average_student}')
+
+# средняя оценка за лекции
+average_lecturer = average_lecturer_grade([lecturer_1, lecturer_2], 'Python')
+print(f'Средняя оценка лекторов за курс Python: {average_lecturer}')
